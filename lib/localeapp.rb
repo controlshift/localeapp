@@ -29,6 +29,7 @@ require 'localeapp/routes'
 require 'localeapp/api_call'
 require 'localeapp/api_caller'
 require 'localeapp/sender'
+require 'localeapp/sync_file'
 require 'localeapp/poller'
 require 'localeapp/updater'
 require 'localeapp/key_checker'
@@ -108,7 +109,7 @@ module Localeapp
     end
 
     def has_config_file?
-      default_config_file_paths.any? { |path| File.exists?(path) }
+      default_config_file_paths.any? { |path| File.exist?(path) }
     end
 
     def default_config_file_paths

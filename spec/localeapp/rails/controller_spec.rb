@@ -19,6 +19,7 @@ describe Localeapp::Rails::Controller, '#handle_translation_updates' do
     with_configuration(configuration) do
       @controller = TestController.new
     end
+    now = Time.now; Time.stub(:now).and_return(now)
   end
 
   after do
@@ -29,7 +30,7 @@ describe Localeapp::Rails::Controller, '#handle_translation_updates' do
     before do
       Localeapp.configuration.environment_name = 'development'
     end
- 
+
     it "calls poller.poll! when the synchronization file's polled_at has changed" do
       Localeapp.poller.write_synchronization_data!(01234, 56789)
       Localeapp.poller.should_receive(:poll!)
@@ -58,13 +59,13 @@ describe Localeapp::Rails::Controller, '#handle_translation_updates' do
       @controller.handle_translation_updates
     end
   end
- 
+
   context "when reloading is enabled" do
     before do
       Localeapp.configuration.environment_name = 'development'
-      Localeapp.poller.stub!(:poll!)
+      Localeapp.poller.stub(:poll!)
     end
- 
+
     it "calls I18n.reload! when the synchronization file's updated_at has changed" do
       Localeapp.poller.write_synchronization_data!(01234, 56789)
       I18n.should_receive(:reload!)
@@ -76,7 +77,7 @@ describe Localeapp::Rails::Controller, '#handle_translation_updates' do
       @controller.handle_translation_updates
     end
   end
- 
+
   context "when reloading is disabled" do
     before do
       Localeapp.configuration.environment_name = 'production'
@@ -103,6 +104,16 @@ describe Localeapp::Rails::Controller, '#handle_translation_updates' do
       expect { @controller.handle_translation_updates }.to raise_error Localeapp::MissingApiKey
     end
   end
+
+  context "when the api_key is empty" do
+    before do
+      Localeapp.configuration.api_key = ''
+    end
+
+    it "raises an exception" do
+      expect { @controller.handle_translation_updates }.to raise_error Localeapp::MissingApiKey
+    end
+  end
 end
 
 describe Localeapp::Rails::Controller, '#send_missing_translations' do
@@ -123,6 +134,12 @@ describe Localeapp::Rails::Controller, '#send_missing_translations' do
   it "proceeds when configuration is enabled" do
     Localeapp.configuration.environment_name = 'development'
     Localeapp.sender.should_receive(:post_missing_translations)
+    @controller.send_missing_translations
+  end
+
+  it "rejects blacklisted translations" do
+    Localeapp.configuration.environment_name = 'development'
+    Localeapp.missing_translations.should_receive(:reject_blacklisted)
     @controller.send_missing_translations
   end
 end

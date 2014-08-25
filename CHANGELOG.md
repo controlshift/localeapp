@@ -1,5 +1,48 @@
 # master
 
+# Version 0.8.1
+
+* Add the `blacklisted_keys_pattern` configuration option
+* Prevent blacklisted keys from being sent to Locale servers in the Rails exception handler
+
+# Version 0.8.0
+
+* Fix problem with line ending in three dots. (@holli)
+* Change deprecated File.exists? to File.exist?
+* Fix "install --github" so it appends README.md. Before it truncated the README.md file with new content, now it appends content in a more correct manner.
+* Fix .gitignore injection so it ensures a newline.
+* Extract synchronisation data into SyncFile and SyncData classes. These value objects allow us to read synchronisation data from yaml files that have both strings and symbols as keys. Sync files now use strings as keys when serialising to yaml. If you find that you have a log/localeapp.yml file that contains the string !ruby, run localeapp pull to update to "regular" yaml syntax.
+* Tweak Aruba config for jRuby (development related only).
+* Fix minor typo in "updater" output message.
+
+# Version 0.7.2
+
+* Display a message when the timestamp used for an update command is too old
+* Do not even try to hit the API when this timestamp is too old (since the API will return a 422 error anyway)
+
+# Version 0.7.1
+
+* Raise Localeapp::MissingApiKey when api_key is empty
+
+# Version 0.7.0
+
+* Drop support for Ruby 1.8 (both MRI and JRuby)
+* Add support for Ruby 2.0 and 2.1 (both MRI and JRuby)
+* Mimic new Rails `translate` helper behaviour, which is to wrap missing translations messages in <span> elements
+* Fix missing translations sending with Rails >= 3.2.16 and >= 4.0.2
+
+# Version 0.6.14
+
+* Fix a bug where the last poll and last refresh date could be nil
+
+# Version 0.6.13
+
+* Respect the `scope` option when contructing translations
+
+# Version 0.6.12
+
+* Specify that the MIT license is used
+
 # Version 0.6.12
 
 * Fix an error creating the folder for the syncfile

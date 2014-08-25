@@ -44,7 +44,7 @@ module Localeapp
 
     def generate_yaml(translations)
       if defined?(Psych) && defined?(Psych::VERSION)
-        Psych.dump(translations, :line_width => -1)[4..-1].sub(/\.\.\.\n$/, '')
+        Psych.dump(translations, :line_width => -1)[4..-1]
       else
         translations.ya2yaml[5..-1]
       end
@@ -80,7 +80,7 @@ module Localeapp
     def atomic_write(file_name, temp_dir = Dir.tmpdir)
       target_dir = File.dirname(file_name)
       unless File.directory?(target_dir)
-        raise "Could not write locale file, please make sure that #{target_dir} exists and is writeable"
+        raise "Could not write locale file, please make sure that #{target_dir} exists and is writable"
       end
 
       permissions = File.stat(file_name).mode if File.exist?(file_name)

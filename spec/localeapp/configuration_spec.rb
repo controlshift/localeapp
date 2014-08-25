@@ -85,6 +85,10 @@ describe Localeapp::Configuration do
     expect { configuration.daemon_log_file = 'log/la.log' }.to change(configuration, :daemon_log_file).to('log/la.log')
   end
 
+  it "sets the sending_blacklist by default" do
+    expect(configuration.blacklisted_keys_pattern).to be_nil
+  end
+
   context "enabled_sending_environments" do
     it "is only development by default" do
       configuration.sending_environments.should == ['development']
@@ -162,4 +166,22 @@ describe Localeapp::Configuration do
       configuration.should_not be_sending_disabled
     end
   end
+
+  describe "#has_api_key?" do
+
+    context "when an api_key is defined" do
+      it "returns true" do
+        configuration.api_key = '0123456789abcdef'
+        expect(configuration.has_api_key?).to be_true
+      end
+    end
+
+    context "with no api_key provided" do
+      it "returns false" do
+        expect(configuration.has_api_key?).to be_false
+      end
+    end
+
+  end
+
 end
